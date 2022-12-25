@@ -72,7 +72,7 @@ func handlerPost(w http.ResponseWriter, r *http.Request, useCase *shortener.UseC
 	}
 	redirectOut := useCase.URLToCode(string(requestBody))
 
-	answer := "http://" + host + "/" + redirectOut.ShortURL + "\n"
+	answer := "http://" + host + "/" + redirectOut.ShortURL
 	returnResponse(w, contentType, []byte(answer), status)
 }
 
