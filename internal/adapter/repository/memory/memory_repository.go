@@ -1,8 +1,6 @@
 package memory
 
 import (
-	"fmt"
-
 	"github.com/april1858/shortener2/internal/app/entity"
 )
 
@@ -21,7 +19,5 @@ func (mr Repository) Store(redirect *entity.Redirect) {
 
 func (mr Repository) Find(code string) string {
 	outURL := mr.memory[code]
-	fmt.Println("outURL - ", outURL)
-	fmt.Println("len memory - ", len(mr.memory))
 	return outURL
 }

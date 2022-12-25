@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/april1858/shortener2/internal/app/entity"
 	"github.com/april1858/shortener2/internal/app/shortener"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -72,14 +71,6 @@ func handlerPost(w http.ResponseWriter, r *http.Request, useCase *shortener.UseC
 		return
 	}
 	redirectOut := useCase.URLToCode(string(requestBody))
-	if err != nil {
-		if err == entity.ErrRedirectInvalid {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
-		return
-	}
 
 	answer := "http://" + host + "/" + redirectOut.ShortURL + "\n"
 	returnResponse(w, contentType, []byte(answer), status)
