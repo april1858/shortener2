@@ -14,6 +14,7 @@ func main() {
 
 	useCase := shortener.NewUseCase(service)
 
+	//increment 3
 	chiRouter := chiadapter.NewChiHandler(*useCase)
 	chiRouter.SetupRoutes()
 	chiRouter.Run(":8080")
