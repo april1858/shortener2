@@ -36,6 +36,7 @@ func Test_handlers(t *testing.T) {
 		rec := httptest.NewRecorder()
 		handlerPost(rec, req, useCase)
 		res := rec.Result()
+		defer res.Body.Close()
 		if res.StatusCode != tc.status {
 			t.Errorf("expected status %v got %v", res.StatusCode, tc.status)
 		}
@@ -51,6 +52,7 @@ func Test_handlers(t *testing.T) {
 				rec := httptest.NewRecorder()
 				handlerGet(rec, r, useCase)
 				res := rec.Result()
+				defer res.Body.Close()
 				if res.StatusCode != http.StatusTemporaryRedirect {
 					t.Errorf("expected status %v got %v", res.StatusCode, http.StatusTemporaryRedirect)
 				}
