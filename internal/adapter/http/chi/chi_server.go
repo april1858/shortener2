@@ -13,15 +13,15 @@ import (
 )
 
 type ChiHandler struct {
-	UseCase   shortener.UseCase
+	Service   shortener.Service
 	ChiRouter *chi.Mux
 }
 
-func NewChiHandler(useCase shortener.UseCase) *ChiHandler {
+func NewChiHandler(services shortener.Service) *ChiHandler {
 	chiRouter := chi.NewRouter()
 	chiRouter.Use(middleware.Logger)
 	return &ChiHandler{
-		UseCase:   useCase,
+		Service:   services,
 		ChiRouter: chiRouter,
 	}
 }
@@ -32,18 +32,13 @@ func (h *ChiHandler) Run(address string) {
 }
 
 func (h *ChiHandler) SetupRoutes() {
-	h.ChiRouter.Get("/{code}", func(w http.ResponseWriter, r *http.Request) {
-		handlerGet(w, r, &h.UseCase)
-	})
-	h.ChiRouter.Post("/", func(w http.ResponseWriter, r *http.Request) {
-		handlerPost(w, r, &h.UseCase)
-	})
+	h.ChiRouter.Get("/{code}", h.handlerGet)
+	h.ChiRouter.Post("/", h.handlerPost)
 }
 
-func handlerGet(w http.ResponseWriter, r *http.Request, useCase *shortener.UseCase) {
-
+func (h *ChiHandler) handlerGet(w http.ResponseWriter, r *http.Request) {
 	code := chi.URLParam(r, "code")
-	redirect := useCase.CodeToURL(code)
+	redirect := h.Service.Find(code)
 	status := http.StatusTemporaryRedirect
 	if redirect == "" {
 		status = http.StatusBadRequest
@@ -52,7 +47,7 @@ func handlerGet(w http.ResponseWriter, r *http.Request, useCase *shortener.UseCa
 	http.Redirect(w, r, redirect, status)
 }
 
-func handlerPost(w http.ResponseWriter, r *http.Request, useCase *shortener.UseCase) {
+func (h *ChiHandler) handlerPost(w http.ResponseWriter, r *http.Request) {
 
 	host := r.Host
 	if host == "" {
@@ -61,16 +56,17 @@ func handlerPost(w http.ResponseWriter, r *http.Request, useCase *shortener.UseC
 	contentType := r.Header.Get("Content-Type")
 	status := http.StatusCreated
 	requestBody, err := io.ReadAll(r.Body)
+	defer r.Body.Close()
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
 	}
 	_, err = url.ParseRequestURI(string(requestBody))
 	if err != nil {
-		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		http.Error(w, "http.StatusBadRequest", http.StatusBadRequest)
 		return
 	}
-	redirectOut := useCase.URLToCode(string(requestBody))
+	redirectOut := h.Service.Store(string(requestBody))
 
 	answer := "http://" + host + "/" + redirectOut.ShortURL
 	returnResponse(w, contentType, []byte(answer), status)

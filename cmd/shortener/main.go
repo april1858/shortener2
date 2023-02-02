@@ -8,14 +8,11 @@ import (
 
 func main() {
 
-	rm := memory.NewRepository()
+	mr := memory.NewRepository()
 
-	service := shortener.NewService(rm)
+	service := shortener.NewService(mr)
 
-	useCase := shortener.NewUseCase(service)
-
-	//increment 3
-	chiRouter := chiadapter.NewChiHandler(*useCase)
+	chiRouter := chiadapter.NewChiHandler(*service)
 	chiRouter.SetupRoutes()
 	chiRouter.Run(":8080")
 }

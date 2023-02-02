@@ -23,17 +23,17 @@ func NewService(redirectRepo Repository) *Service {
 	}
 }
 
-func (uc *Service) Find(code string) string {
-	return uc.repository.Find(code)
+func (s *Service) Find(code string) string {
+	return s.repository.Find(code)
 }
 
-func (uc *Service) Store(url string) *entity.Redirect {
+func (s *Service) Store(url string) *entity.Redirect {
 	redirect := &entity.Redirect{
 		OriginalURL: url,
 	}
 
 	redirect.ShortURL = createCode()
-	uc.repository.Store(redirect)
+	s.repository.Store(redirect)
 
 	return redirect
 }

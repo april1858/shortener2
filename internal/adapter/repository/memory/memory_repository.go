@@ -8,7 +8,6 @@ import (
 
 type Repository struct {
 	memory map[string]string
-	rwLock *sync.RWMutex
 	mx     *sync.RWMutex
 }
 
@@ -20,14 +19,14 @@ func NewRepository() *Repository {
 func (mr Repository) Store(redirect *entity.Redirect) {
 	mr.mx = new(sync.RWMutex)
 	mr.mx.Lock()
+	defer mr.mx.Unlock()
 	mr.memory[redirect.ShortURL] = redirect.OriginalURL
-	mr.mx.Unlock()
 }
 
 func (mr Repository) Find(code string) string {
-	mr.rwLock = new(sync.RWMutex)
-	mr.rwLock.Lock()
-	defer mr.rwLock.Unlock()
+	mr.mx = new(sync.RWMutex)
+	mr.mx.Lock()
+	defer mr.mx.Unlock()
 	outURL := mr.memory[code]
 	return outURL
 }
