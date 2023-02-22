@@ -56,7 +56,7 @@ func (h *ChiHandler) handlerPost(w http.ResponseWriter, r *http.Request) {
 	contentType := r.Header.Get("Content-Type")
 	status := http.StatusCreated
 	requestBody, err := io.ReadAll(r.Body)
-	defer r.Body.Close()
+
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
 		return
@@ -66,6 +66,8 @@ func (h *ChiHandler) handlerPost(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "http.StatusBadRequest", http.StatusBadRequest)
 		return
 	}
+	defer r.Body.Close()
+
 	redirectOut := h.Service.Store(string(requestBody))
 
 	answer := "http://" + host + "/" + redirectOut.ShortURL
