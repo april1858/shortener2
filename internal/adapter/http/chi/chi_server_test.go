@@ -34,7 +34,7 @@ func TestChiHandler_handlerPost(t *testing.T) {
 			res.Body.Close()
 			statusCode := res.StatusCode
 			if statusCode != tt.status {
-				t.Errorf("StatusCode = %v, want %v", wr.Result().StatusCode, tt.status)
+				t.Errorf("StatusCode = %v, want %v", statusCode, tt.status)
 			}
 		})
 	}
