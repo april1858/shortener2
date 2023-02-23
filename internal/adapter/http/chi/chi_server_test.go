@@ -30,7 +30,10 @@ func TestChiHandler_handlerPost(t *testing.T) {
 			wr := httptest.NewRecorder()
 			req := httptest.NewRequest(http.MethodPost, "http://localhost:8080/", strings.NewReader(tt.originalURL))
 			ChiHandler.handlerPost(wr, req)
-			if wr.Result().StatusCode != tt.status {
+			res := wr.Result()
+			res.Body.Close()
+			statusCode := res.StatusCode
+			if statusCode != tt.status {
 				t.Errorf("StatusCode = %v, want %v", wr.Result().StatusCode, tt.status)
 			}
 		})
