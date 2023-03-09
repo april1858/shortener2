@@ -1,12 +1,14 @@
 package chiadapter
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"net/url"
 
+	"github.com/april1858/shortener2/internal/app/entity"
 	"github.com/april1858/shortener2/internal/app/shortener"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -34,6 +36,7 @@ func (h *ChiHandler) Run(address string) {
 func (h *ChiHandler) SetupRoutes() {
 	h.ChiRouter.Get("/{code}", h.handlerGet)
 	h.ChiRouter.Post("/", h.handlerPost)
+	h.ChiRouter.Post("/api/shorten", h.handlerJSON)
 }
 
 func (h *ChiHandler) handlerGet(w http.ResponseWriter, r *http.Request) {
@@ -68,9 +71,45 @@ func (h *ChiHandler) handlerPost(w http.ResponseWriter, r *http.Request) {
 	}
 	defer r.Body.Close()
 
-	redirectOut := h.Service.Store(string(requestBody))
+	redirect := h.Service.Store(string(requestBody))
 
-	answer := "http://" + host + "/" + redirectOut.ShortURL
+	answer := "http://" + host + "/" + redirect.ShortURL
+	returnResponse(w, contentType, []byte(answer), status)
+}
+
+func (h *ChiHandler) handlerJSON(w http.ResponseWriter, r *http.Request) {
+	host := r.Host
+	if host == "" {
+		host = "localhost:8080"
+	}
+	contentType := "application/json"
+
+	status := http.StatusCreated
+	requestBody, err := io.ReadAll(r.Body)
+
+	if err != nil {
+		http.Error(w, http.StatusText(http.StatusBadRequest), http.StatusBadRequest)
+		return
+	}
+	redirect := &entity.Redirect{}
+	if err := json.Unmarshal(requestBody, redirect); err != nil {
+		return
+	}
+
+	_, err = url.ParseRequestURI(redirect.OriginalURL)
+	if err != nil {
+		http.Error(w, "http.statusBadRequest", http.StatusBadRequest)
+		return
+	}
+	defer r.Body.Close()
+
+	redirect = h.Service.Store(redirect.OriginalURL)
+
+	answerStruct := map[string]string{"result":"http://" + host + "/" + redirect.ShortURL}
+	answer, err := json.Marshal(answerStruct)
+	if err != nil {
+		return
+	}
 	returnResponse(w, contentType, []byte(answer), status)
 }
 
