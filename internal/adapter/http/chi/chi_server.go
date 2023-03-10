@@ -10,9 +10,12 @@ import (
 
 	"github.com/april1858/shortener2/internal/app/entity"
 	"github.com/april1858/shortener2/internal/app/shortener"
+	"github.com/april1858/shortener2/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
+
+var cnfg config.Config=config.NewConfig()
 
 type ChiHandler struct {
 	Service   shortener.Service
@@ -34,9 +37,9 @@ func (h *ChiHandler) Run(address string) {
 }
 
 func (h *ChiHandler) SetupRoutes() {
-	h.ChiRouter.Get("/{code}", h.handlerGet)
-	h.ChiRouter.Post("/", h.handlerPost)
-	h.ChiRouter.Post("/api/shorten", h.handlerJSON)
+	h.ChiRouter.Get(cnfg.BaseURL + "{code}", h.handlerGet)
+	h.ChiRouter.Post(cnfg.BaseURL, h.handlerPost)
+	h.ChiRouter.Post(cnfg.BaseURL + "api/shorten", h.handlerJSON)
 }
 
 func (h *ChiHandler) handlerGet(w http.ResponseWriter, r *http.Request) {
