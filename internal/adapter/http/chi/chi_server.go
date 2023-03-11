@@ -37,9 +37,9 @@ func (h *ChiHandler) Run(address string) {
 }
 
 func (h *ChiHandler) SetupRoutes() {
-	h.ChiRouter.Get(cnfg.BaseURL + "{code}", h.handlerGet)
-	h.ChiRouter.Post(cnfg.BaseURL, h.handlerPost)
-	h.ChiRouter.Post(cnfg.BaseURL + "api/shorten", h.handlerJSON)
+	h.ChiRouter.Get("/" + cnfg.BaseURL + "{code}", h.handlerGet)
+	h.ChiRouter.Post("/" + cnfg.BaseURL, h.handlerPost)
+	h.ChiRouter.Post("/" + cnfg.BaseURL + "api/shorten", h.handlerJSON)
 }
 
 func (h *ChiHandler) handlerGet(w http.ResponseWriter, r *http.Request) {
