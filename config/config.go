@@ -20,7 +20,7 @@ var F = flag.String("f", "", "FILE_STORAGE_PATH is string")
 var D = flag.String("d", "", "DATABASE_DSN is string")
 
 var cfg = Config{
-	ServerAdres:     "localhost:8080",
+	ServerAdres:     "8080",
 	BaseURL:  "",
 	FileStoragePath: "",
 	DatabaseDsn:     "",
