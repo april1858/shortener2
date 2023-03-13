@@ -18,5 +18,5 @@ func main() {
 
 	chiRouter := chiadapter.NewChiHandler(*service)
 	chiRouter.SetupRoutes()
-	chiRouter.Run(":" + address)
+	chiRouter.Run(address)
 }
