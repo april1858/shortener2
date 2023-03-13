@@ -4,7 +4,7 @@ import (
 	chiadapter "github.com/april1858/shortener2/internal/adapter/http/chi"
 	"github.com/april1858/shortener2/internal/adapter/repository/memory"
 	"github.com/april1858/shortener2/internal/app/shortener"
-	"github.com/april1858/shortener2/config"
+	//"github.com/april1858/shortener2/config"
 )
 
 func main() {
