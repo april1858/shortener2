@@ -10,11 +10,13 @@ import (
 func main() {
 	cnfg := config.NewConfig()
 
+	address := cnfg.ServerAdres
+
 	mr := memory.NewRepository()
 
 	service := shortener.NewService(mr)
 
 	chiRouter := chiadapter.NewChiHandler(*service)
 	chiRouter.SetupRoutes()
-	chiRouter.Run(":" + cnfg.ServerAdres)
+	chiRouter.Run(address)
 }
