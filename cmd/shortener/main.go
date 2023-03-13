@@ -8,9 +8,9 @@ import (
 )
 
 func main() {
-	cnfg := config.NewConfig()
+	//cnfg := config.NewConfig()
 
-	address := cnfg.ServerAdres
+	//address := cnfg.ServerAdres
 
 	mr := memory.NewRepository()
 
@@ -18,5 +18,5 @@ func main() {
 
 	chiRouter := chiadapter.NewChiHandler(*service)
 	chiRouter.SetupRoutes()
-	chiRouter.Run(address)
+	chiRouter.Run(":8080")
 }
